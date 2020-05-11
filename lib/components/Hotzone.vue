@@ -22,80 +22,83 @@
 </template>
 
 <script>
-import Zone from './Zone'
-import addItem from '../directives/addItem'
+  import Zone from './Zone'
+  import addItem from '../directives/addItem'
 
-export default {
-  name: 'HotZone',
-  data () {
-    return {
-      zones: []
+  export default {
+    name: 'HotZone',
+    data () {
+      return {
+        zones: []
+      }
+    },
+    props: {
+      image: {
+        type: String,
+        required: true
+      },
+      zonesInit: {
+        type: Array,
+        default: () => []
+      },
+      max: {
+        type: Number
+      },
+      index: {
+        type: Number
+      }
+    },
+    mounted () {
+      this.zones = this.zonesInit.concat()
+    },
+    methods: {
+      changeInfo (res) {
+        let { info, index } = res
+
+        this.changeItem(info, index)
+      },
+      addItem (setting) {
+        this.zones.push(setting)
+        this.hasChange()
+        this.$emit('add',{setting,dataIdx:this.index})
+      },
+      eraseItem (index = this.zones.length - 1) {
+        this.removeItem(index)
+        this.$emit('erase',{index, dataIdx:this.index})
+      },
+      isOverRange () {
+        let { max, zones } = this
+
+        return max && zones.length > max
+      },
+      overRange () {
+        const index = this.zones.length - 1
+
+        this.removeItem(index)
+        this.$emit('overRange', index)
+      },
+      removeItem (index = this.zones.length - 1) {
+        this.zones.splice(index, 1)
+        this.hasChange()
+        this.$emit('remove',{index,dataIdx: this.index})
+      },
+      changeItem (info, index = this.zones.length - 1) {
+        Object.assign(this.zones[index], info)
+        this.hasChange()
+      },
+      hasChange () {
+        this.$emit('change',{ zones:this.zones,dataIdx: this.index})
+      }
+    },
+    directives: {
+      addItem
+    },
+    components: {
+      Zone
     }
-  },
-  props: {
-    image: {
-      type: String,
-      required: true
-    },
-    zonesInit: {
-      type: Array,
-      default: () => []
-    },
-    max: {
-      type: Number
-    }
-  },
-  mounted () {
-    this.zones = this.zonesInit.concat()
-  },
-  methods: {
-    changeInfo (res) {
-      let { info, index } = res
-
-      this.changeItem(info, index)
-    },
-    addItem (setting) {
-      this.zones.push(setting)
-      this.hasChange()
-      this.$emit('add', setting)
-    },
-    eraseItem (index = this.zones.length - 1) {
-      this.removeItem(index)
-      this.$emit('erase', index)
-    },
-    isOverRange () {
-      let { max, zones } = this
-
-      return max && zones.length > max
-    },
-    overRange () {
-      const index = this.zones.length - 1
-
-      this.removeItem(index)
-      this.$emit('overRange', index)
-    },
-    removeItem (index = this.zones.length - 1) {
-      this.zones.splice(index, 1)
-      this.hasChange()
-      this.$emit('remove', index)
-    },
-    changeItem (info, index = this.zones.length - 1) {
-      Object.assign(this.zones[index], info)
-      this.hasChange()
-    },
-    hasChange () {
-      this.$emit('change', this.zones)
-    }
-  },
-  directives: {
-    addItem
-  },
-  components: {
-    Zone
   }
-}
 </script>
 
 <style scoped>
-@import '../assets/styles/main.css';
+  @import '../assets/styles/main.css';
 </style>
