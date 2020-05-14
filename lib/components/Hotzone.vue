@@ -1,13 +1,13 @@
 <template>
   <div
     ref="content"
-    class="hz-m-wrap"
-  >
-    <img class="hz-u-img" :src="image" />
+    class="hz-m-wrap"  >
+    <div v-for="img in image">
+      <img class="hz-u-img"  :src="img" />
+    </div>
     <ul
       class="hz-m-area"
-      v-add-item
-    >
+      v-add-item    >
       <zone
         class="hz-m-item"
         v-for="(zone, index) in zones"
@@ -34,8 +34,10 @@
     },
     props: {
       image: {
-        type: String,
-        required: true
+        type: Array
+      },
+      imageList: {
+        type: Array
       },
       zonesInit: {
         type: Array,
@@ -80,14 +82,14 @@
       removeItem (index = this.zones.length - 1) {
         this.zones.splice(index, 1)
         this.hasChange()
-        this.$emit('remove',{index,dataIdx: this.index})
+        this.$emit('remove',index)
       },
       changeItem (info, index = this.zones.length - 1) {
         Object.assign(this.zones[index], info)
         this.hasChange()
       },
       hasChange () {
-        this.$emit('change',{ zones:this.zones,dataIdx: this.index})
+        this.$emit('change',this.zones)
       }
     },
     directives: {
